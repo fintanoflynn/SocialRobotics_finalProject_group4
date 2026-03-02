@@ -6,12 +6,6 @@ resolution-markers = [
     "python_full_version < '3.13'",
 ]
 
-[manifest]
-members = [
-    "socialrobotics-group4",
-    "src",
-]
-
 [[package]]
 name = "alpha-mini-rug"
 version = "0.7.3.2"
@@ -1361,29 +1355,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/26/ab/bb1c60e7bfd6b7a736f76439b78ebbfb5e92a81b626b6e94a87e166f2ea4/speechrecognition-3.14.5.tar.gz", hash = "sha256:2d185192986b9b67a1502825a330e971f59a2cae0262f727a19ad1f6b586d00a", size = 32859817, upload-time = "2025-12-31T11:25:46.518Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b8/a7/903429719d39ac2c42aa37086c90e816d883560f13c87d51f09a2962e021/speechrecognition-3.14.5-py3-none-any.whl", hash = "sha256:0c496d74e9f29b1daadb0d96f5660f47563e42bf09316dacdd57094c5095977e", size = 32856308, upload-time = "2025-12-31T11:25:41.161Z" },
-]
-
-[[package]]
-name = "src"
-version = "0.1.0"
-source = { virtual = "src" }
-dependencies = [
-    { name = "alpha-mini-rug" },
-    { name = "autobahn" },
-    { name = "matplotlib" },
-    { name = "openai" },
-    { name = "python-dotenv" },
-    { name = "twisted" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "alpha-mini-rug", specifier = ">=0.7.3.2" },
-    { name = "autobahn", specifier = ">=25.12.2" },
-    { name = "matplotlib", specifier = ">=3.10.8" },
-    { name = "openai", specifier = ">=2.21.0" },
-    { name = "python-dotenv", specifier = ">=1.2.1" },
-    { name = "twisted", specifier = ">=25.5.0" },
 ]
 
 [[package]]
