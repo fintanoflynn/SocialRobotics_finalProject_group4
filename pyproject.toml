@@ -20,8 +20,3 @@ dependencies = [
     "twist>=0.1.0",
     "dotenv>=0.9.9",
 ]
-
-[tool.uv.workspace]
-members = [
-    "src",
-]
