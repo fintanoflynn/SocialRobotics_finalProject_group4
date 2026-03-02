@@ -7,10 +7,10 @@ import random
 import time 
 import os
 
-import src.movements as movements  
-import src.face_tracking as face_tracking
-import src.prompts as prompts
-import src.audio_configuration as audio_configuration
+import movements
+import face_tracking
+import prompts
+import audio_configuration
 
 from openai import OpenAI
 from dotenv import load_dotenv
