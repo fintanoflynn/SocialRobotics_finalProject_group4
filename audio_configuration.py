@@ -7,7 +7,8 @@ from alpha_mini_rug.speech_to_text import SpeechToText
 
 # Audio configurations:
 audio_processor = SpeechToText() 
-audio_processor.silence_time = 0.5 
+audio_processor.silence_time = 0.5
+
 audio_processor.silence_threshold2 = 100 
 audio_processor.logging = False 
 
