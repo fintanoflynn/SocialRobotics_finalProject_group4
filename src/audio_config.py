@@ -1,7 +1,7 @@
-from twisted.internet.defer import inlineCallbacks
+# from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.util import sleep
 from alpha_mini_rug.speech_to_text import SpeechToText
-
+from twisted.internet.defer import inlineCallbacks
 
 # Audio configurations:
 audio_processor = SpeechToText() 
@@ -27,7 +27,7 @@ def STT(audio_processor):
             return text
         
         yield sleep(0.05)
-
+        
 
 @inlineCallbacks
 def TTS(session, text, audio_processor):
@@ -35,8 +35,10 @@ def TTS(session, text, audio_processor):
     Unsubscribes from STT here. 
     The robot produces speech without listening to itself.
     """
+    
     audio_processor.do_speech_recognition = False
     yield session.call("rie.dialogue.say", text=text) 
     num = len(text)
     sleep(num/200)
     audio_processor.do_speech_recognition = True
+
