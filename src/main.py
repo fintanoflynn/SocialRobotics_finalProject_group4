@@ -1,7 +1,6 @@
 from autobahn.twisted.component import Component, run
 from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.util import sleep
-from alpha_mini_rug import perform_movement
 from alpha_mini_rug.speech_to_text import SpeechToText
 import random 
 import time 
@@ -11,6 +10,7 @@ import movements
 import face_tracking
 import prompts
 import audio_configuration
+import face_tracking
 
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -18,7 +18,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # Initialize the OpenAI client
-
 role = None # Director or Guesser
 time_limit = 8 # A way to end the game (for testing it was set to 8 seconds)
 cards = ["pizza", "bicycle", "football", "basketball", "phone"] 
@@ -186,9 +185,16 @@ def main(session, wamp):
     global role
     audio_processor = SpeechToText() 
 
+    face = yield face_tracking.find_face(session, active=True)
+
+    yield face_tracking.track_face(session)
+    yield sleep(1.0)
+
     yield session.call("rom.sensor.hearing.sensitivity", 1650) 
     yield session.call("rie.dialogue.config.language", lang="en")
+    
 
+    print('Listening now')
     yield session.subscribe(audio_processor.listen_continues, "rom.sensor.hearing.stream") 
     yield session.call("rom.sensor.hearing.stream")
     
@@ -197,6 +203,7 @@ def main(session, wamp):
                             Let's play With Other Words. Do you know the game or would you like to
                             hear the rules? Say yes if you want the rules.
                         """)
+    yield session.call("rom.sensor.hearing.stream")
     user = yield audio_configuration.STT()
 
     if "yes" in user:
@@ -234,7 +241,7 @@ wamp = Component(
         "serializers": ["msgpack"],
         "max_retries": 0
     }],
-    realm="rie.69a57bd6b788cadff3459881"
+    realm="rie.69a7f6ceb788cadff345a488"
 )
 
 wamp.on_join(main)
