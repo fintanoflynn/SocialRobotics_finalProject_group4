@@ -1,12 +1,13 @@
-from autobahn.twisted.component import Component, run
 from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.util import sleep
-from alpha_mini_rug import perform_movement
 from alpha_mini_rug.speech_to_text import SpeechToText
 
 
 # Audio configurations:
-
+audio_processor = SpeechToText() 
+audio_processor.silence_time = 0.5
+audio_processor.silence_threshold2 = 100 
+audio_processor.logging = False 
 
 
 @inlineCallbacks
@@ -14,10 +15,12 @@ def STT(audio_processor):
     """
     Wait until SpeechToText has a new final utterance and return it.
     """
+
     while True:
         audio_processor.loop() 
         
         if audio_processor.new_words:
+            print("listening")
             text = " ".join(map(str, audio_processor.words)).strip().lower()
             audio_processor.words = []
             audio_processor.new_words = False
@@ -27,13 +30,13 @@ def STT(audio_processor):
 
 
 @inlineCallbacks
-def TTS_2(session, text, audio_processor):
+def TTS(session, text, audio_processor):
     """
     Unsubscribes from STT here. 
     The robot produces speech without listening to itself.
     """
-    audio_processor.do_speech_recognition = False 
+    audio_processor.do_speech_recognition = False
     yield session.call("rie.dialogue.say", text=text) 
     num = len(text)
-    yield sleep(num/200)
+    sleep(num/200)
     audio_processor.do_speech_recognition = True

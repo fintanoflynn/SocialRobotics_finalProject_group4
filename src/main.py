@@ -8,7 +8,7 @@ import os
 
 import movements
 import face_tracking
-import audio_confi
+import audio_config
 
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -61,7 +61,7 @@ def director_role(session):
     start_time = time.time() # timer starts
     llm_chat = [] 
     yield movements.nod_head(session)
-    yield audio_confi.TTS(session, "Alright I will be the director then. Let me think of a word!", audio_processor)
+    yield audio_config.TTS(session, "Alright I will be the director then. Let me think of a word!", audio_processor)
     response = generate_llm_response(f"""
                                         Play With Other Words (guessing game) with me. Give me a description of 
                                         secret word I do not know. Don't use the word in the sentence ofcourse.
@@ -83,7 +83,7 @@ def director_role(session):
                                         Create a different description but keep it short still. If the user asks for the secret word, you should encourage 
                                         them to guess again like "try to guess again!".""")
     llm_chat.append(response)
-    yield audio_confi.TTS(session, response, audio_processor)
+    yield audio_config.TTS(session, response, audio_processor)
 
     while True:
         if time.time() - start_time > time_limit:
@@ -91,17 +91,17 @@ def director_role(session):
             yield session.call("rie.dialogue.say",text=f"The time's up! The word was {chosen_word}")
             return
         
-        user = yield audio_confi.STT(audio_processor)
+        user = yield audio_config.STT(audio_processor)
         user_chat.append(user)
 
         if "exit" in user:
             yield movements.shake_head(session)
             yield movements.wave_right_arm(session)
-            yield audio_confi.TTS(session, "Ok, I will leave you then.", audio_processor)
+            yield audio_config.TTS(session, "Ok, I will leave you then.", audio_processor)
             break
         if chosen_word in user:
             yield movements.raise_hands(session)
-            yield audio_confi.TTS(session, "Congratulations! You have guessed the word.", audio_processor)
+            yield audio_config.TTS(session, "Congratulations! You have guessed the word.", audio_processor)
             break
         
         response = generate_llm_response(f"""
@@ -113,7 +113,7 @@ def director_role(session):
         
         llm_chat.append(response)
         yield movements.shake_head(session)
-        yield audio_confi.TTS(session, response, audio_processor)
+        yield audio_config.TTS(session, response, audio_processor)
 
 
 @inlineCallbacks
@@ -139,26 +139,26 @@ def guesser_role(session):
                                         """)
     llm_chat.append(response)
     yield movements.nod_head(session)
-    yield audio_confi.TTS(session, "Alright you are the director. Think of a word and I will try to guess it.", audio_processor)
+    yield audio_config.TTS(session, "Alright you are the director. Think of a word and I will try to guess it.", audio_processor)
     
     while True:
         if time.time() - start_time > time_limit:
             yield movements.raise_hands(session)
-            yield audio_confi.TTS(session, "The time's up. You win!", audio_processor)
+            yield audio_config.TTS(session, "The time's up. You win!", audio_processor)
             return
         
-        user = yield audio_confi.STT(audio_processor)
+        user = yield audio_config.STT(audio_processor)
         user_chat.append(user)
 
         if "exit" in user:
             yield movements.shake_head(session)
             yield movements.wave_right_arm(session)
-            yield audio_confi.TTS(session, "Ok, I will leave you then!", audio_processor)
+            yield audio_config.TTS(session, "Ok, I will leave you then!", audio_processor)
             break
         
         if "correct" in user:
             yield movements.raise_hands(session)
-            yield audio_confi.TTS(session, "I have won!", audio_processor)
+            yield audio_config.TTS(session, "I have won!", audio_processor)
             break 
         else:
             response = generate_llm_response(f"""
@@ -169,7 +169,7 @@ def guesser_role(session):
 
             llm_chat.append(response)
             yield movements.nod_head(session)
-            yield audio_confi.TTS(session, response, audio_processor)
+            yield audio_config.TTS(session, response, audio_processor)
 
 
 @inlineCallbacks
@@ -202,28 +202,28 @@ def main(session, wamp):
     yield session.call("rom.sensor.hearing.stream")
     
     yield movements.wave_right_arm(session)
-    yield audio_confi.TTS(session, """
+    yield audio_config.TTS(session, """
                             Let's play With Other Words. Do you know the game or would you like to
                             hear the rules? Say yes if you want the rules.
                         """, audio_processor)
     yield session.call("rom.sensor.hearing.stream")
-    user = yield audio_confi.STT(audio_processor)
+    user = yield audio_config.STT(audio_processor)
 
     if "yes" in user:
         yield movements.nod_head(session)
-        yield audio_confi.TTS(session, f"{rules}", audio_processor)
+        yield audio_config.TTS(session, f"{rules}", audio_processor)
     
-    yield audio_confi.TTS(session, """
+    yield audio_config.TTS(session, """
                             Let's start the game and if you want to leave the game say exit. 
                             Would you like to be the director or the guesser?
                         """, audio_processor)
 
     while True:
-        user = yield audio_confi.STT(audio_processor)
+        user = yield audio_config.STT(audio_processor)
         if "exit" in user:
             yield movements.shake_head(session)
             yield movements.wave_right_arm(session)
-            yield audio_confi.TTS(session, "Ok, I will leave you then.", audio_processor)
+            yield audio_config.TTS(session, "Ok, I will leave you then.", audio_processor)
             yield leave_program(session)
         if "director" in user: # if user is director then the role of the robot is Guesser
             role = "guesser"
@@ -234,7 +234,7 @@ def main(session, wamp):
             yield director_role(session)
             role = None
 
-        yield audio_confi.TTS(session, "Say director or guesser to choose your role or you can say exit to leave the game. ", audio_processor)
+        yield audio_config.TTS(session, "Say director or guesser to choose your role or you can say exit to leave the game. ", audio_processor)
         yield sleep(0.05) 
 
 
