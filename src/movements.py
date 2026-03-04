@@ -37,21 +37,31 @@ def shake_head(session):
         force=True)
     yield sleep(2)
 
-
 @inlineCallbacks
 def wave_right_arm(session):
-    """
-    Move the arm in a waving motion to signal hello or goodbye.
-    """
-    yield perform_movement(session,
-        frames=[{"time": 1200, "data": {"body.arms.right.upper.pitch": -2.5, "body.arms.right.lower.roll":-0.5}}, 
-                {"time": 1800, "data": {"body.arms.right.upper.pitch": -2.5, "body.arms.right.lower.roll":-1.0}}, 
-                {"time": 2500, "data": {"body.arms.right.upper.pitch": -2.5, "body.arms.right.lower.roll":6.50e-04}}, 
-                {"time": 3000, "data": {"body.arms.right.upper.pitch": -2.5, "body.arms.right.lower.roll":-1.0}}, 
-                {"time": 3800, "data": {"body.arms.right.upper.pitch": -2.5, "body.arms.right.lower.roll":6.50e-04}}, 
-                {"time": 4700, "data": {"body.arms.right.upper.pitch": -0.5, "body.arms.right.lower.roll":-0.7}}
-                ],
-        force = True)
+    print("DEBUG: using NEW wave_right_arm with rom.actuator.motor.write")
+
+    frames = [
+        {"time": 1200, "data": {"body.arms.right.upper.pitch": -2.5, "body.arms.right.lower.roll": -0.5}},
+        {"time": 1800, "data": {"body.arms.right.upper.pitch": -2.5, "body.arms.right.lower.roll": -1.0}},
+        {"time": 2500, "data": {"body.arms.right.upper.pitch": -2.5, "body.arms.right.lower.roll": 0.0}},
+        {"time": 3000, "data": {"body.arms.right.upper.pitch": -2.5, "body.arms.right.lower.roll": -1.0}},
+        {"time": 3800, "data": {"body.arms.right.upper.pitch": -2.5, "body.arms.right.lower.roll": 0.0}},
+        {"time": 4700, "data": {"body.arms.right.upper.pitch": -0.5, "body.arms.right.lower.roll": -0.7}},
+    ]
+
+    try:
+        result = yield session.call(
+            "rom.actuator.motor.write",
+            frames=frames,
+            force=True,
+        )
+        print("motor write result:", result)
+    except Exception as e:
+        print("motor write failed:", repr(e))
+        raise
+
+    yield sleep(1)
 
 @inlineCallbacks
 def raise_hands(session):
