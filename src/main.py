@@ -202,14 +202,28 @@ def main(session, wamp):
     movements.wave_right_arm(session)
     yield audio_config.TTS(session, """
                             Let's play With Other Words. Do you know the game or would you like to
-                            hear the rules? Say yes if you want the rules.
-                        """, audio_processor)
+                            hear the rules?
+                           """, audio_processor)
+    yield audio_config.TTS(session, "Say yes if you want the rules.")
     yield session.call("rom.sensor.hearing.stream")
     user = yield audio_config.STT(audio_processor)
 
     if "yes" in user:
         movements.nod_head(session)
-        yield audio_config.TTS(session, f"{rules}", audio_processor)
+        sleep(5)
+
+        yield audio_config.TTS(session, "This game has two roles, a Director and a Guesser.")
+
+        yield audio_config.TTS(session, """
+                                            The Director chooses a word and describes it without saying the word itself.
+                                            The Guesser tries to figure out the word from the description.
+                                        """)
+
+        yield audio_config.TTS(session, """
+                                            If the Guesser makes a correct guess and the Director 
+                                            confirms it by saying "correct", the Guesser wins. The Guesser 
+                                            has 3 minutes to guess the word.
+                                        """)
     
     yield audio_config.TTS(session, """
                             Let's start the game and if you want to leave the game say exit. 
