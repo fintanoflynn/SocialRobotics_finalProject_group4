@@ -1,7 +1,5 @@
-from autobahn.twisted.component import Component, run
 from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.util import sleep
-from alpha_mini_rug.speech_to_text import SpeechToText
 import random 
 import time 
 

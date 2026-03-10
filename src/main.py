@@ -9,7 +9,7 @@ import guesser
 import director
 
 audio_processor = SpeechToText()
-audio_processor.silence_time = 0.5 
+audio_processor.silence_time = int(0.5)
 audio_processor.silence_threshold2 = 40
 audio_processor.logging = False
 
@@ -22,7 +22,6 @@ Guesser makes a correct guess and the Director confirms it by saying "correct", 
 The Guesser has 3 minutes to guess the word.
 """
 
-
 @inlineCallbacks
 def leave_program(session):
     """
@@ -30,7 +29,6 @@ def leave_program(session):
     """
     yield session.call("rom.sensor.hearing.close")
     session.leave()
-
 
 @inlineCallbacks
 def main(session, wamp):
@@ -41,7 +39,7 @@ def main(session, wamp):
 
     yield session.call("rom.optional.behavior.play", name="BlocklyStand")
 
-    yield sleep(1.0)
+    yield sleep(1)
 
     yield session.call("rom.sensor.hearing.sensitivity", 1650) 
     yield session.call("rie.dialogue.config.language", lang="en")
@@ -64,7 +62,7 @@ def main(session, wamp):
 
     if "yes" in user:
         yield movements.nod_head(session)
-        sleep(5)
+        yield sleep(5)
         yield movements.one_hand_raise(session)
 
         yield audio_config.TTS(session, "This game has two roles, a Director and a Guesser.")

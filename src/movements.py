@@ -1,9 +1,6 @@
-from autobahn.twisted.component import Component, run
 from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.util import sleep
 from alpha_mini_rug import perform_movement
-from alpha_mini_rug.speech_to_text import SpeechToText
-
 
 @inlineCallbacks
 def nod_head(session):
@@ -18,7 +15,6 @@ def nod_head(session):
                 {"time": 3000, "data": {"body.head.pitch": 0.0}}],
         force=True)
     yield sleep(2)
-
 
 @inlineCallbacks
 def shake_head(session):
