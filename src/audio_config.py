@@ -36,9 +36,7 @@ def TTS(session, text, audio_processor):
     The robot produces speech without listening to itself.
     """
     
-    audio_processor.do_speech_recognition = False
+    audio_processor.do_speech = False
     yield session.call("rie.dialogue.say", text=text) 
-    num = len(text)
-    sleep(num/200)
-    audio_processor.do_speech_recognition = True
+    audio_processor.do_speech = True
 
