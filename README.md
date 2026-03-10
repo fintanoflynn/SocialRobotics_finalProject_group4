@@ -6,14 +6,18 @@ Using LLMs to communicate and play the With Other Words guessing game.
 To initallize the environment follow these steps: 
 1. uv sync 
 2. source .venv/bin/activate 
-    
+
+## API key
+Create a .env file to hold your api key. 
+The api key should be structured as in example.env. 
+
 ## Running file
 To run the file you can use the play button in the top right hand side of the screen, this will start the code.
 
 Or in the terminal type: 
 
 '''
-uv run src/speech_to_text.py
+python src/main.py
 '''
 
 ## Authors
