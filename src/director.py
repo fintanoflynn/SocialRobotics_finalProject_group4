@@ -17,7 +17,7 @@ llm_chat = []
 time_limit = 50000 # A way to end the game (for testing it was set to 8 seconds)
 
 @inlineCallbacks
-def director_role(session):
+def director_role(session, audio_processor):
     """
     This function executes when the role of the robot is the Director.
     """
@@ -27,7 +27,7 @@ def director_role(session):
     llm_chat = [] 
     movements.nod_head(session)
     yield audio_config.TTS(session, "Alright I will be the director then. Let me think of a word!", audio_processor)
-    response = generate_llm_response(f"""
+    response = llm.generate_llm_response(f"""
                                         Play With Other Words (guessing game) with me. Give me a description of 
                                         secret word I do not know. Don't use the word in the sentence ofcourse.
                                         The secret word I dont know is {chosen_word}.
@@ -69,7 +69,7 @@ def director_role(session):
             yield audio_config.TTS(session, "Congratulations! You have guessed the word.", audio_processor)
             break
         
-        response = generate_llm_response(f"""
+        response = llm.generate_llm_response(f"""
                                                     Your past response: {llm_chat}.
                                                     Our past responses: {user_chat}
                                                     Give us your new description for the {chosen_word} for 
@@ -78,4 +78,4 @@ def director_role(session):
         
         llm_chat.append(response)
         movements.shake_head(session)
-        yield audio_config.TTS(session, response, audio_processor)
+        yield audio_config.TTS(session, response, llm.audio_processor)
