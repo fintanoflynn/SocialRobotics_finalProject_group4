@@ -10,8 +10,8 @@ import director
 
 
 audio_processor = SpeechToText()
-audio_processor.silence_time = 0.5 
-audio_processor.silence_threshold2 = 100
+audio_processor.silence_time = int(0.5)
+audio_processor.silence_threshold2 = 40
 audio_processor.logging = False
 
 role = None # Director or Guesser
@@ -22,10 +22,6 @@ without saying the word itself. The Guesser tries to figure out the word from th
 Guesser makes a correct guess and the Director confirms it by saying "correct", the Guesser wins. 
 The Guesser has 3 minutes to guess the word.
 """
-# chat history:
-user_chat = [] 
-llm_chat = []
-
 
 @inlineCallbacks
 def leave_program(session):
@@ -58,7 +54,7 @@ def main(session, wamp):
                             Let's play With Other Words. Do you know the game or would you like to
                             hear the rules?
                            """, audio_processor)
-    yield audio_config.TTS(session, "Say yes if you want the rules.")
+    yield audio_config.TTS(session, "Say yes if you want the rules.", audio_processor)
     yield session.call("rom.sensor.hearing.stream")
     user = yield audio_config.STT(audio_processor)
 

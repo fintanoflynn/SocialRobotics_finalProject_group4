@@ -1,7 +1,5 @@
-from autobahn.twisted.component import Component, run
 from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.util import sleep
-from alpha_mini_rug.speech_to_text import SpeechToText
 import random 
 import time 
 
@@ -47,7 +45,7 @@ def guesser_role(session, audio_processor):
             yield audio_config.TTS(session, "The time's up. You win!", audio_processor)
             return
 
-        user = yield audio_config.STT(audio_processor, response)
+        user = yield audio_config.STT(audio_processor)
         user_chat.append(user)
 
         if "exit" in user:

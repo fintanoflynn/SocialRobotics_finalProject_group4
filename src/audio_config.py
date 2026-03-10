@@ -1,13 +1,7 @@
 # from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.util import sleep
-from alpha_mini_rug.speech_to_text import SpeechToText
 from twisted.internet.defer import inlineCallbacks
-
-# Audio configurations:
-audio_processor = SpeechToText() 
-audio_processor.silence_time = 0.5
-audio_processor.silence_threshold2 = 100 
-audio_processor.logging = False 
+from alpha_mini_rug.speech_to_text import SpeechToText
 
 
 @inlineCallbacks
