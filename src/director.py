@@ -5,8 +5,9 @@ import time
 import movements
 import audio_config
 import llm
+import prompts
+import cards
 
-cards = ["pizza", "bicycle", "football", "basketball", "phone"] 
 
 # chat history:
 user_chat = [] 
@@ -19,31 +20,14 @@ def director_role(session, audio_processor):
     This function executes when the role of the robot is the Director.
     """
     
-    chosen_word = random.choice(cards)
+    chosen_word = random.choice(cards.card)
     start_time = time.time() # timer starts
     llm_chat = [] 
     movements.nod_head(session)
     yield audio_config.TTS(session, "Alright I will be the director then. Let me think of a word!", audio_processor)
-    response = llm.generate_llm_response(f"""
-                                        Play With Other Words (guessing game) with me. Give me a description of 
-                                        secret word I do not know. Don't use the word in the sentence ofcourse.
-                                        The secret word I dont know is {chosen_word}.
-                                        When playing, give a very short explanation like you are playing a guessing game. The goal
-                                          is for the user to make multiple guesses and work towards the answer based on your description. Leave the explanation vague but 
-                                        not too vague that no guesses can be made however it should be hard. 
-                                        If the user doesn't get close, give them more hints. Don't repeat your previous description, make a new one and adjust the difficulty. 
-                                        Create a different description but keep it short still. If the user asks for the secret word, you should encourage 
-                                        them to guess again like "try to guess again!".""")
-    user_chat.append(f"""
-                                        Play With Other Words (guessing game) with me. Give me a description of 
-                                        secret word I do not know. Don't use the word in the sentence ofcourse.
-                                        The secret word I dont know is {chosen_word}. 
-                                        When playing, give a very short explanation like you are playing a guessing game. The goal
-                                          is for the user to make multiple guesses and work towards the answer based on your description. Leave the explanation vague but 
-                                        not too vague that no guesses can be made however it should be hard. 
-                                        If the user doesn't get close, give them more hints. Don't repeat your previous description, make a new one and adjust the difficulty. 
-                                        Create a different description but keep it short still. If the user asks for the secret word, you should encourage 
-                                        them to guess again like "try to guess again!".""")
+    prompt = prompts.generate_director_prompt(chosen_word)
+    response = llm.generate_llm_response(prompt)
+    user_chat.append(prompt)
     llm_chat.append(response)
     yield audio_config.TTS(session, response, audio_processor)
 
