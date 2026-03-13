@@ -24,7 +24,7 @@ def guesser_role(session, audio_processor):
     print(chosen_word)
     start_time = time.time() 
     llm_chat = [] 
-    yield movements.thinking(session)
+    yield movements.nod_head(session)
     prompt = prompts.generate_guesser_prompt()
     response = llm.generate_llm_response(prompt)
     user_chat.append(prompt)
@@ -39,8 +39,7 @@ def guesser_role(session, audio_processor):
             return
         
         yield movements.breathing(session)
-        print("i am in guesser")
-        user = yield audio_config.STT(audio_processor, response)
+        user = yield audio_config.STT(audio_processor, response, session)
         user_chat.append(user)
 
         if "exit" in user:

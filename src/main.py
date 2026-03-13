@@ -10,7 +10,7 @@ import director
 
 audio_processor = SpeechToText()
 audio_processor.silence_time = int(0.5)
-audio_processor.silence_threshold2 = 40
+audio_processor.silence_threshold2 = 10
 audio_processor.logging = False
 
 role = None # Director or Guesser
@@ -58,7 +58,7 @@ def main(session, wamp):
     yield audio_config.TTS(session, "Say yes if you want the rules.")
     yield session.call("rom.sensor.hearing.stream") 
     response = ""
-    user = yield audio_config.STT(audio_processor, response)
+    user = yield audio_config.STT(audio_processor, response, session)
 
     if "yes" in user:
         yield movements.nod_head(session)
@@ -87,7 +87,7 @@ def main(session, wamp):
                         """)
 
     while True:
-        user = yield audio_config.STT(audio_processor, response)
+        user = yield audio_config.STT(audio_processor, response, session)
         if "exit" in user:
             yield movements.shake_head(session)
             yield movements.wave_right_arm(session)
@@ -113,7 +113,7 @@ wamp = Component(
         "serializers": ["msgpack"],
         "max_retries": 0
     }],
-    realm="rie.69b0250db788cadff345cc0f"
+    realm="rie.69b3e3009a57f4e5d77b11ed"
 )
 
 wamp.on_join(main)

@@ -40,8 +40,7 @@ def director_role(session, audio_processor):
             return
         
         yield movements.breathing(session)
-        user = yield audio_config.STT(audio_processor, response)
-        print("here in director")
+        user = yield audio_config.STT(audio_processor, response, session)
         user_chat.append(user)
 
         if "exit" in user:

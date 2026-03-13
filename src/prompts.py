@@ -14,12 +14,13 @@ def generate_director_prompt(chosen_word):
                                             Do not use the secret word or obvious variations of it.
                                             Keep your hints short, natural, and suitable for a spoken interaction.
                                             Your first hint should be somewhat challenging, but still possible to guess.
+                                            Only provide one hint at a time. 
                                             The goal is for the human to make multiple guesses and gradually get closer to the answer.
 
                                             [ADDITIONAL INSTRUCTIONS]
-                                            If the human is not close, give another short hint that is clearer than the previous one.
+                                            If the human is not close, give another short hint that is easier than the previous one.
                                             Do not repeat the same description twice.
-                                            Adjust the difficulty over time by becoming slightly more specific.
+                                            Decrease the difficulty over time by becoming slightly more specific.
                                             If the human asks directly for the answer, do not reveal it immediately. Instead, encourage them to guess again.
                                             Keep the interaction playful, supportive, and concise.
                                             """
