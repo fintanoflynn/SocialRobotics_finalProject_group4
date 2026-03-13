@@ -6,6 +6,7 @@ import time
 import movements
 import audio_config
 import llm
+import prompts
 
 cards = ["pizza", "bicycle", "football", "basketball", "phone"] 
 
@@ -24,18 +25,9 @@ def guesser_role(session, audio_processor):
     start_time = time.time() 
     llm_chat = [] 
     yield movements.thinking(session)
-    response = llm.generate_llm_response("""   
-                                    Play With Other Words with me. Guess the word I am thinking of. 
-                                    I will give you a short description of it without saying the
-                                    actual words of course. You can ask me questions if you are unsure but
-                                    keep them short. You can only make one guess at a time.
-                                        """)
-    user_chat.append("""   
-                                    Play With Other Words with me. Guess the word I am thinking of. 
-                                    I will give you a short description of it without saying the
-                                    actual words of course. You can ask me questions if you are unsure but
-                                    keep them short. You can only make one guess at a time.
-                                        """)
+    prompt = prompts.generate_guesser_prompt()
+    response = llm.generate_llm_response(prompt)
+    user_chat.append(prompt)
     llm_chat.append(response)
     yield sleep(2)
     yield audio_config.TTS(session, "Alright you are the director. Think of a word and I will try to guess it.")
