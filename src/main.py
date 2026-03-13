@@ -80,16 +80,7 @@ def main(session, wamp):
     yield session.subscribe(on_camera_frame, "rie.vision.face.stream")
     yield session.call("rie.vision.face.stream")
 
-    # Call the find_face function here
-    print("Looking for a face...")
     face_found = yield camera_vision.find_face(session, active=True)
-    if face_found:
-        print("Face detected!")
-        yield audio_config.TTS(session, "I see you!")
-    else:
-        print("No face detected.")
-        yield audio_config.TTS(session, "I can't see anyone.")
-
 
     yield movements.wave_right_arm(session)
 
@@ -156,7 +147,7 @@ wamp = Component(
         "serializers": ["msgpack"],
         "max_retries": 0
     }],
-    realm="rie.69b3e3009a57f4e5d77b11ed"
+    realm="rie.69b3e7919a57f4e5d77b1212"
 )
 
 wamp.on_join(main)
