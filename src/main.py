@@ -7,7 +7,9 @@ import movements
 import audio_config
 import guesser
 import director
-
+import camera_vision
+import cv2
+import numpy as np
 audio_processor = SpeechToText()
 audio_processor.silence_time = int(0.5)
 audio_processor.silence_threshold2 = 40
@@ -30,6 +32,31 @@ def leave_program(session):
     yield session.call("rom.sensor.hearing.close")
     session.leave()
 
+# Callback function to handle incoming camera frames
+def on_camera_frame(frame):
+    """
+    Callback function to process and display the camera frames.
+
+    Args:
+        frame: The frame data received from the robot's camera stream.
+    """
+    try:
+        # Assuming the frame is received as a byte array
+        np_frame = np.frombuffer(frame, dtype=np.uint8)
+        image = cv2.imdecode(np_frame, cv2.IMREAD_COLOR)
+
+        # Display the frame using OpenCV
+        if image is not None:
+            cv2.imshow("Robot Camera Feed", image)
+        else:
+            print("Failed to decode the camera frame.")
+
+        # Close the window when 'q' is pressed
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            cv2.destroyAllWindows()
+    except Exception as e:
+        print("Error processing camera frame:", e)
+
 @inlineCallbacks
 def main(session, wamp):
     """
@@ -48,6 +75,22 @@ def main(session, wamp):
     yield session.subscribe(audio_processor.listen_continues, "rom.sensor.hearing.stream") 
     yield session.call("rom.sensor.hearing.stream")
     
+    # Subscribe to the camera stream
+    print("Subscribing to the camera stream...")
+    yield session.subscribe(on_camera_frame, "rie.vision.face.stream")
+    yield session.call("rie.vision.face.stream")
+
+    # Call the find_face function here
+    print("Looking for a face...")
+    face_found = yield camera_vision.find_face(session, active=True)
+    if face_found:
+        print("Face detected!")
+        yield audio_config.TTS(session, "I see you!")
+    else:
+        print("No face detected.")
+        yield audio_config.TTS(session, "I can't see anyone.")
+
+
     yield movements.wave_right_arm(session)
 
     yield audio_config.TTS(session, """
@@ -113,7 +156,7 @@ wamp = Component(
         "serializers": ["msgpack"],
         "max_retries": 0
     }],
-    realm="rie.69b0250db788cadff345cc0f"
+    realm="rie.69b3e3009a57f4e5d77b11ed"
 )
 
 wamp.on_join(main)
