@@ -1,4 +1,5 @@
 from twisted.internet.defer import inlineCallbacks
+from autobahn.twisted.util import sleep
 import random 
 import time 
 
@@ -24,34 +25,41 @@ def director_role(session, audio_processor):
     start_time = time.time() # timer starts
     llm_chat = [] 
 
-    yield movements.nod_head(session)
-    yield audio_config.TTS(session, "Alright I will be the director then. Let me think of a word!")
+    yield audio_config.TTS(session, "Alright I will be the director then. Let me think of a word!", audio_processor)
     yield movements.thinking(session)
     prompt = prompts.generate_director_prompt(chosen_word)
     response = llm.generate_llm_response(prompt)
     user_chat.append(prompt)
     llm_chat.append(response)
-    yield audio_config.TTS(session, response)
 
     while True:
+        yield movements.breathing(session)
         if time.time() - start_time > time_limit:
             yield movements.shake_head(session)
             yield session.call("rie.dialogue.say",text=f"The time's up! The word was {chosen_word}")
             return
         
-        yield movements.breathing(session)
-        user = yield audio_config.STT(audio_processor, response, session)
+        audio_config.clear_audio_state(audio_processor)
+        user = yield audio_config.speak_then_capture(
+            session,
+            audio_processor,
+            response,
+            response=response,
+            grace_period=1.0,
+            timeout=8
+        )
         user_chat.append(user)
 
         if "exit" in user:
             yield movements.shake_head(session)
             yield movements.wave_right_arm(session)
-            yield audio_config.TTS(session, "Ok, I will leave you then.")
+            yield audio_config.TTS(session, "Ok, I will leave you then.", audio_processor)
             break
         if chosen_word in user:
             yield movements.raise_hands(session)
-            yield audio_config.TTS(session, "Congratulations! You have guessed the word.")
-            break
+            yield sleep(3)
+            yield audio_config.TTS(session, "Congratulations! You have guessed the word.", audio_processor)
+            return
         
         yield movements.thinking(session)
         response = llm.generate_llm_response(f"""
@@ -62,4 +70,3 @@ def director_role(session, audio_processor):
                                                     """)
         
         llm_chat.append(response)
-        yield audio_config.TTS(session, response)

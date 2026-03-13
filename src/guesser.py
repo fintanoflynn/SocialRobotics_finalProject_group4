@@ -30,28 +30,36 @@ def guesser_role(session, audio_processor):
     user_chat.append(prompt)
     llm_chat.append(response)
     yield sleep(2)
-    yield audio_config.TTS(session, "Alright you are the director. Think of a word and I will try to guess it.")
+
     
     while True:
+        yield movements.breathing(session)
         if time.time() - start_time > time_limit:
             yield movements.raise_hands(session)
-            yield audio_config.TTS(session, "The time's up. You win!")
+            yield audio_config.TTS(session, "The time's up. You win!", audio_processor)
             return
         
-        yield movements.breathing(session)
-        user = yield audio_config.STT(audio_processor, response, session)
+        audio_config.clear_audio_state(audio_processor)
+        user = yield audio_config.speak_then_capture(
+            session,
+            audio_processor,
+            response,
+            response=response,
+            grace_period=1.0,
+            timeout=8
+        )
         user_chat.append(user)
 
         if "exit" in user:
             yield movements.shake_head(session)
             yield movements.wave_right_arm(session)
-            yield audio_config.TTS(session, "Ok, I will leave you then!")
+            yield audio_config.TTS(session, "Ok, I will leave you then!", audio_processor)
             break
         
         if "correct" in user:
             yield movements.raise_hands(session)
             yield sleep(3)
-            yield audio_config.TTS(session, "I have won!")
+            yield audio_config.TTS(session, "I have won!", audio_processor)
             break 
         else:
             yield movements.thinking(session)
@@ -62,4 +70,3 @@ def guesser_role(session, audio_processor):
                                                     """)
 
             llm_chat.append(response)
-            yield audio_config.TTS(session, response)
