@@ -7,8 +7,8 @@ import movements
 import audio_config
 import llm
 import prompts
+import cards
 
-cards = ["pizza", "bicycle", "football", "basketball", "phone"] 
 
 # chat history:
 user_chat = [] 
@@ -20,7 +20,7 @@ def guesser_role(session, audio_processor):
     """
     This function executes when the role of the robot is the Guesser.
     """    
-    chosen_word = random.choice(cards)
+    chosen_word = random.choice(cards.card)
     print(chosen_word)
     start_time = time.time() 
     llm_chat = [] 
