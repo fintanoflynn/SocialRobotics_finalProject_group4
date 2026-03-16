@@ -11,7 +11,7 @@ import camera_vision
 
 audio_processor = SpeechToText()
 audio_processor.silence_time = int(1.2)
-audio_processor.silence_threshold2 = 10
+audio_processor.silence_threshold2 = 20
 audio_processor.logging = False
 
 role = None # Director or Guesser
@@ -29,7 +29,7 @@ def leave_program(session):
 def main(session, wamp):
     """
     Plays game WOW with user.
-    """
+    """ 
     global role
 
     yield session.call("rom.optional.behavior.play", name="BlocklyStand")
