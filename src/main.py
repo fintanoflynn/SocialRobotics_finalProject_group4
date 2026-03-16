@@ -11,7 +11,7 @@ import director
 
 audio_processor = SpeechToText()
 audio_processor.silence_time = int(0.5)
-audio_processor.silence_threshold2 = 40
+audio_processor.silence_threshold2 = 10
 audio_processor.logging = False
 
 role = None # Director or Guesser
@@ -106,7 +106,7 @@ wamp = Component(
         "serializers": ["msgpack"],
         "max_retries": 0
     }],
-    realm="rie.69b0250db788cadff345cc0f"
+    realm="rie.69b7e9f4a31f42c33c3f7340"
 )
 
 wamp.on_join(main)
